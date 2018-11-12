@@ -1,12 +1,14 @@
 package com.kalah.game.service;
 
-import static org.hamcrest.CoreMatchers.any;
-import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import com.kalah.game.repository.KalahRepository;
+import static org.mockito.BDDMockito.*;
 
 public class KalahServiceTest {
 
@@ -15,6 +17,9 @@ public class KalahServiceTest {
   
   @InjectMocks
   private KalahService underTest;
+  
+  @Mock
+  private KalahRepository repo;
 
   @Before()
   public void setup(){
@@ -28,7 +33,7 @@ public class KalahServiceTest {
     //when
     Game result =  underTest.createNewGame();
     //then
-    Assert.assertTrue(validUUIDCheck(result.getGameId().toString()));
+    Assert.assertTrue(validUUIDCheck(result.getId().toString()));
   }
   
   @Test
@@ -38,7 +43,42 @@ public class KalahServiceTest {
     //when
     Game result =  underTest.createNewGame();
     //then
-    Assert.assertEquals(urlBuilder(result.getGameId().toString()) , result.getUri());
+    Assert.assertEquals(urlBuilder(result.getId().toString()) , result.getUri());
+  }
+  
+  @Test
+  public void shouldCreateANewGameWithValidKalahConfiguration(){
+    //given
+    underTest.port = PORT;
+    int[] pits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
+    //when
+    Game result =  underTest.createNewGame();
+    //then
+    int i =0;
+    for (int pit : pits) {
+      Assert.assertEquals(pit, result.getPits()[i]);  
+      i++;
+    }
+  }
+  
+  @Test
+  public void shouldMovePits(){
+    //given
+    Game testGame = new Game();
+    int[] expectedPits = new int[]{0,7,7,7,7,7,1,6,6,6,6,6,6};
+    int[] givenPits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
+    testGame.setPits(givenPits);
+    int pitId = 1;
+
+    given(repo.findGame(testGame.getId().toString())).willReturn(testGame);
+    //when
+    Game result = underTest.move(testGame.getId().toString(), pitId);
+    //then
+    int i =0;
+    for (int pit : expectedPits) {
+      Assert.assertEquals(pit, result.getPits()[i]);  
+      i++;
+    }
   }
 
   private boolean validUUIDCheck(String gameId) {

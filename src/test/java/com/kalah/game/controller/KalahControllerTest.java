@@ -36,7 +36,7 @@ public class KalahControllerTest {
   public void shouldMakeAMove(){
     //given
     String gameId = "123";
-    String pitId = "1";
+    int pitId = 1;
     //when
     underTest.move(gameId, pitId);
     //then

@@ -22,7 +22,7 @@ public class KalahController {
   }
 
   @RequestMapping(value = "{gameId}/pits/{pitId}", method = RequestMethod.POST)
-  public @ResponseBody ResponseEntity<String> move(@PathVariable("gameId") String gameId,@PathVariable("pitId") String pitId) {
+  public @ResponseBody ResponseEntity<String> move(@PathVariable("gameId") String gameId,@PathVariable("pitId") int pitId) {
     kalahService.move(gameId,pitId);
     return null;
   }

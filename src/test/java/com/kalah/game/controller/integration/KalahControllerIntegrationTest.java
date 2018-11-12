@@ -128,8 +128,6 @@ public class KalahControllerIntegrationTest {
     return uuid;
   }
 
-
-
   private String createURLWithPort(String uri) {
     return "http://localhost:" + port + uri;
   }
