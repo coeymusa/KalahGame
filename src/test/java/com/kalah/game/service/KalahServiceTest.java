@@ -61,8 +61,17 @@ public class KalahServiceTest {
     }
   }
   
+  @Test(expected = KalahGameException.class)
+  public void shouldThrowErrorWhenGameCannotBeFound() throws KalahGameException{
+    //given
+    String gameId = "2";
+    int pitId = 1;
+    //when
+    underTest.move(gameId, pitId);
+    //then
+  }
   @Test
-  public void shouldMovePits(){
+  public void shouldMovePits() throws KalahGameException{
     //given
     Game testGame = new Game();
     int[] expectedPits = new int[]{0,7,7,7,7,7,1,6,6,6,6,6,6};

@@ -50,6 +50,42 @@ public class KalahControllerIntegrationTest {
     Assert.assertEquals(200, responseCode);
   }
 
+//  @Test
+//  public void givenANewMoveHasBeenRequestedThen200Returned() throws IOException{
+//    //given 
+//    String gameId = createNewGame();
+//    String pitId = "1";
+//
+//    RequestBody body = RequestBody.create(JSON, "{}");
+//    Request request = new Request.Builder()
+//        .url(createURLWithPortForMove(gameId,pitId))
+//        .post(body)
+//        .build();
+//    //when
+//    Response httpResponse = client.newCall(request).execute(); 
+//    //then
+//    int responseCode = httpResponse.code();
+//    Assert.assertEquals(200, responseCode);
+//  }
+  
+  @Test
+  public void givenANewMoveHasBeenRequestedWithAnInvalidGameIdThen500Returned() throws IOException{
+    //given 
+    String gameId = "INVALID_GAME_ID";
+    String pitId = "1";
+
+    RequestBody body = RequestBody.create(JSON, "{}");
+    Request request = new Request.Builder()
+        .url(createURLWithPortForMove(gameId,pitId))
+        .post(body)
+        .build();
+    //when
+    Response httpResponse = client.newCall(request).execute(); 
+    //then
+    int responseCode = httpResponse.code();
+    Assert.assertEquals(500, responseCode);
+  }
+  
   @Test
   public void givenANewGameHasBeenRequestedThenAValidGameURLisReturned() throws IOException{
     //given 
@@ -83,25 +119,20 @@ public class KalahControllerIntegrationTest {
     Assert.assertTrue(validUUIDCheck(gameId));
   }
 
-  @Test
-  public void givenANewMoveHasBeenRequestedThen200Returned() throws IOException{
-    //given 
-    String gameId = "123";
-    String pitId = "1";
-
-    RequestBody body = RequestBody.create(JSON, "{}");
+  private String createNewGame() throws IOException {
+    RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
-        .url(createURLWithPortForMove(gameId,pitId))
-        .post(body)
+        .url(createURLWithPort(NEW_GAME_ENDPOINT))
+        .post(requestBody)
         .build();
-    //when
+    
     Response httpResponse = client.newCall(request).execute(); 
     //then
-    int responseCode = httpResponse.code();
-    Assert.assertEquals(200, responseCode);
+    String body = httpResponse.body().string();
+    String gameId = parseBody(body);
+    return gameId;
   }
   
-
   private boolean validURLCheck(String url, String gameId) {
     if(url.equals("http://localhost:0/games/" + gameId)) {
         return true;

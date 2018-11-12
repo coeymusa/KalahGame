@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.kalah.game.service.KalahGameException;
 import com.kalah.game.service.KalahService;
 
 
@@ -33,7 +34,7 @@ public class KalahControllerTest {
   }
 
   @Test
-  public void shouldMakeAMove(){
+  public void shouldMakeAMove() throws KalahGameException{
     //given
     String gameId = "123";
     int pitId = 1;
