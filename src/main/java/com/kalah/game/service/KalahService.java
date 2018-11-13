@@ -21,18 +21,13 @@ public class KalahService {
     Game game = new Game();
     game.setUri(buildUrlForNewGame(game.getId()));
     LOGGER.info("Creating new game with id: " + game.getId().toString());
-    return game;
+    return repo.save(game); 
   }
 
   public Game move(String gameId, int pitId) throws KalahGameException {
     LOGGER.info("Moving seeds in pit: "+ pitId + "for game: " +gameId);
-    Game game = repo.findGame(gameId);
-    
-    if(game == null){
-
-      throw new KalahGameException("Cannot find game with an id: " +gameId);
-    }
-    
+    Game game = repo.findById(gameId).orElseThrow( () -> new KalahGameException("Cannot find game with an id: " + gameId));
+        
     int[] movedPits = movePits(game.getPits(), pitId);
     game.setPits(movedPits);
     return game;

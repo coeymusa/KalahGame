@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import com.kalah.game.repository.KalahRepository;
 import static org.mockito.BDDMockito.*;
+import java.util.Optional;
 
 public class KalahServiceTest {
 
@@ -78,8 +79,9 @@ public class KalahServiceTest {
     int[] givenPits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
     testGame.setPits(givenPits);
     int pitId = 1;
+    String testGameId = testGame.getId().toString();
 
-    given(repo.findGame(testGame.getId().toString())).willReturn(testGame);
+    given(repo.findById(testGameId)).willReturn(Optional.of(testGame));
     //when
     Game result = underTest.move(testGame.getId().toString(), pitId);
     //then
