@@ -105,7 +105,7 @@ public class KalahIntegrationTest {
     //given 
     String requestGameId = createNewGame();
     String pitId = "7";
-    String expectedErrorMessage = "Cannot request move on an empty pit: " + requestGameId;
+    String expectedErrorMessage = "Requested move invalid for game: "+ requestGameId + ". Pit "+ pitId + " is empty or a house.";
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPortForMove(requestGameId,pitId))
