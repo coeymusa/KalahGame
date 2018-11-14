@@ -2,24 +2,17 @@ package com.kalah.game.service;
 
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
-import org.junit.Ignore;
 
-@Entity
-@Table(name = "game_store")
 public class Game {
   
-  @Id
   UUID id;
-  @Column
+
   String uri;
   
   @JsonIgnore
-  @Column(name = "pits")
   String pitsString;
   
-  @JsonIgnore
-  @Transient
+
   int[] pits;
   
    Game(){
