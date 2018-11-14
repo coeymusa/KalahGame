@@ -1,36 +1,30 @@
 package com.kalah.game.service;
 
 import java.util.UUID;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Document
 public class Game {
   
-  UUID id;
-
-  String uri;
-  
+  @Field("uri")
+  private String uri;
+  @Id
+  @Field("_id")
+  private UUID _id; 
   @JsonIgnore
-  String pitsString;
-  
-
-  int[] pits;
+  @Field("pits")
+  private int[] pits;
   
    Game(){
-    this.id = UUID.randomUUID();
+    this._id = UUID.randomUUID();
     this.pits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
-    this.pitsString = arrayToString(this.pits);
   }
   
   public int[] getPits() {
     return pits;
-  }
-
-  public String getPitsString() {
-    return arrayToString(this.pits);
-  }
-
-  public void setPitsString(String pitsString) {
-    this.pitsString = pitsString;
   }
 
   public void setPits(int[] pits) {
@@ -38,7 +32,7 @@ public class Game {
   }
 
   public UUID getId() {
-    return id;
+    return _id;
   }
   
   public String getUri() {
@@ -48,15 +42,5 @@ public class Game {
   public void setUri(String uri) {
     this.uri = uri;
   }
-
-  public String arrayToString(int[] pits2){
-    StringBuilder sb = new StringBuilder();
-    for(int i : pits2){
-      sb.append(i + ",");
-    }
-    return sb.toString();
-    
-  }
-  
   
 }

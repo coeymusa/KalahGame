@@ -1,21 +1,28 @@
 package com.kalah.game.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import com.kalah.game.repository.KalahRepository;
-import static org.mockito.BDDMockito.*;
-import java.util.Optional;
 
 public class KalahServiceTest {
 
   private static final String PORT = "9000";
   private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; //https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
-  
+  private static String testGameId =null;
+  private static Game testGame = new Game();
+
   @InjectMocks
   private KalahService underTest;
   
@@ -24,6 +31,8 @@ public class KalahServiceTest {
 
   @Before()
   public void setup(){
+    testGame = new Game();
+    testGameId = testGame.getId().toString();
     MockitoAnnotations.initMocks(this);
   }
 
@@ -31,9 +40,13 @@ public class KalahServiceTest {
   public void shouldCreateANewGameWithAValidUUID(){
     //given
     underTest.port = PORT;
+    given(repo.findById(testGameId)).willReturn(Optional.of(testGame));
     //when
-    Game result =  underTest.createNewGame();
+    underTest.createNewGame();
     //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
     Assert.assertTrue(validUUIDCheck(result.getId().toString()));
   }
   
@@ -41,9 +54,13 @@ public class KalahServiceTest {
   public void shouldCreateANewGameWithAValidUrl(){
     //given
     underTest.port = PORT;
+    given(repo.save(any(Game.class))).willReturn(testGame);
     //when
-    Game result =  underTest.createNewGame();
+    underTest.createNewGame();
     //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
     Assert.assertEquals(urlBuilder(result.getId().toString()) , result.getUri());
   }
   
@@ -52,9 +69,13 @@ public class KalahServiceTest {
     //given
     underTest.port = PORT;
     int[] pits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
+    given(repo.findById(testGameId)).willReturn(Optional.of(testGame));
     //when
-    Game result =  underTest.createNewGame();
+    underTest.createNewGame();
     //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
     int i =0;
     for (int pit : pits) {
       Assert.assertEquals(pit, result.getPits()[i]);  
@@ -80,11 +101,15 @@ public class KalahServiceTest {
     testGame.setPits(givenPits);
     int pitId = 1;
     String testGameId = testGame.getId().toString();
-
-    given(repo.findById(testGameId)).willReturn(Optional.of(testGame));
+    List<Game> gameList = new ArrayList<Game>();
+    gameList.add(testGame);
+    given(repo.findAll()).willReturn(gameList);
     //when
-    Game result = underTest.move(testGame.getId().toString(), pitId);
+    underTest.move(testGame.getId().toString(), pitId);
     //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
     int i =0;
     for (int pit : expectedPits) {
       Assert.assertEquals(pit, result.getPits()[i]);  

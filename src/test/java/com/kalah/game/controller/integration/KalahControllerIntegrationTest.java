@@ -136,7 +136,8 @@ public class KalahControllerIntegrationTest {
     }
     return false;
   }
-
+  
+  //breaks on reordering of Game model
   private String parseBody(String body) {
     String UUIDParts[] = body.split(":");
     String uuid = UUIDParts[4].substring(1, UUIDParts[4].length()-2);
