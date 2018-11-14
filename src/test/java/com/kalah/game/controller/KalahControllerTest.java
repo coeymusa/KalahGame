@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kalah.game.service.KalahGameException;
 import com.kalah.game.service.KalahService;
 
@@ -25,7 +26,7 @@ public class KalahControllerTest {
   }
 
   @Test
-  public void shouldCreateNewGame(){
+  public void shouldCreateNewGame() throws JsonProcessingException{
     //given
     //when
     underTest.createNewGame();

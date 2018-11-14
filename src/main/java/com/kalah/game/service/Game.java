@@ -1,46 +1,55 @@
 package com.kalah.game.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Document
 public class Game {
-  
-  @Field("uri")
-  private String uri;
   @Id
   @Field("_id")
-  private UUID _id; 
+  private UUID _id;
+  @Field("uri")
+  private String uri;
+  @Field("status")
+  private int[] status;
   @JsonIgnore
-  @Field("pits")
-  private int[] pits;
-  
-   Game(){
+  private boolean gameFinished;
+
+  Game() {
     this._id = UUID.randomUUID();
-    this.pits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
-  }
-  
-  public int[] getPits() {
-    return pits;
+    this.status = new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0};
+    this.gameFinished = false;
   }
 
-  public void setPits(int[] pits) {
-    this.pits = pits;
+  public int[] getStatus() {
+    return status;
+  }
+
+  public void setStatus(int[] status) {
+    this.status = status;
   }
 
   public UUID getId() {
     return _id;
   }
-  
+
   public String getUri() {
     return uri;
   }
-  
+
   public void setUri(String uri) {
     this.uri = uri;
   }
-  
+
+  public void setGameFinished(boolean gameFinished) {
+    this.gameFinished = gameFinished;
+  }
+
+  public boolean getGameFinished() {
+    return gameFinished;
+  }
+
 }
