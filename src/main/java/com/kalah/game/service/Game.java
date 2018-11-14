@@ -8,30 +8,28 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document
 public class Game {
-
-  @Field("uri")
-  private String uri;
   @Id
   @Field("_id")
   private UUID _id;
-  @JsonIgnore
-  @Field("pits")
-  private int[] pits;
+  @Field("uri")
+  private String uri;
+  @Field("status")
+  private int[] status;
   @JsonIgnore
   private boolean gameFinished;
 
   Game() {
     this._id = UUID.randomUUID();
-    this.pits = new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0};
+    this.status = new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0};
     this.gameFinished = false;
   }
 
-  public int[] getPits() {
-    return pits;
+  public int[] getStatus() {
+    return status;
   }
 
-  public void setPits(int[] pits) {
-    this.pits = pits;
+  public void setStatus(int[] status) {
+    this.status = status;
   }
 
   public UUID getId() {

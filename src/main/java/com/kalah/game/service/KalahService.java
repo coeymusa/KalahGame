@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 public class KalahService {
   // private static final // LOGGER // LOGGER= // LOGGER.get// LOGGER(KalahService.class.getName());
 
-  private static final int[] TOP_WINNING_ROWS = new int[]{0,1,2,3,4,5};
-  private static final int[] BOTTOM_WINNING_ROWS = new int[]{7,8,9,10,11,12,13};
+private static final int[] INVALID_PITS = new int[]{6,13};
   @Value("${server.port:9000}")
   String port;
 
@@ -25,28 +24,41 @@ public class KalahService {
     game.setUri(buildUrlForNewGame(game.getId()));
     System.out.println("CREATED GAME WITH ID: " + game.getId());
     // LOGGER.info("Creating new game with id: " + game.getId().toString());
-    return repo.save(game);
+    return repo.save(game); 
   }
 
   public Game move(String gameId, int pitId) throws KalahGameException {
     // LOGGER.info("Moving seeds in pit: "+ pitId + "for game: " +gameId);
 
-    List<Game> games = repo.findAll();
-    Game foundGame =
-        games.stream().filter(game -> game.getId().toString().contains(gameId)).findFirst()
+    List<Game> repoGames = repo.findAll();
+    Game game =
+        repoGames.stream().filter(currentGame -> currentGame.getId().toString().contains(gameId)).findFirst()
             .orElseThrow(() -> new KalahGameException("Cannot find game with an id: " + gameId));
 
-    if(foundGame.getGameFinished()){
+    if(game.getGameFinished()){
       throw new KalahGameException("Cannot make a move on an ended game: " + gameId);
     }
     
-    int[] movedPits = movePits(foundGame.getPits(), pitId);
-    if (playerWonGame(movedPits)) {
-      foundGame.setGameFinished(true);
+    if(requestedMoveInvalid(game.getStatus(), pitId)){
+        throw new KalahGameException("Requested move invalid for game: " + gameId + ". Pit " + pitId + " is empty or a house." );
     }
-    foundGame.setPits(movedPits);
+    
+    int[] movedPits = movePits(game.getStatus(), pitId);
+    
+    if (playerWonGame(movedPits)) {
+      game.setGameFinished(true);
+    }
+    game.setStatus(movedPits);
 
-    return repo.save(foundGame);
+    return repo.save(game);
+  }
+
+  private boolean requestedMoveInvalid(int[] pits, int pitId) {
+    if(pits[pitId -1] == 0 || pitId-1 == INVALID_PITS[0] || pitId-1 == INVALID_PITS[1]){
+      return true;
+    }
+
+    return false;
   }
 
   private boolean playerWonGame(int[] movedPits) {
