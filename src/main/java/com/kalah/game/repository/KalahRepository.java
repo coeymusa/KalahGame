@@ -1,14 +1,8 @@
 package com.kalah.game.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import com.kalah.game.service.Game;
 
-@Repository
-public class KalahRepository {
-
-  public Game findGame(String gameId) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+public interface KalahRepository extends MongoRepository<Game, String> {
 
 }

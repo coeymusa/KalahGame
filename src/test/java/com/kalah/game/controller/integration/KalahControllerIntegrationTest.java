@@ -1,18 +1,20 @@
 package com.kalah.game.controller.integration;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.kalah.game.KalahGameApplication;
+import com.kalah.game.repository.KalahRepository;
+import com.kalah.game.service.Game;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,6 +31,9 @@ public class KalahControllerIntegrationTest {
 
   @LocalServerPort
   private int port;
+  
+  @Autowired
+  private KalahRepository repo;
 
   @Before()
   public void setup(){
@@ -36,37 +41,47 @@ public class KalahControllerIntegrationTest {
   }
 
   @Test
-  public void givenANewGameHasBeenRequestedThen200Returned() throws IOException{
+  public void givenANewGameHasBeenRequestedThen200ReturnedWithAValidGame() throws IOException{
     //given 
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPort(NEW_GAME_ENDPOINT))
         .post(requestBody)
         .build();
+    
+    System.out.println(request.url());
     //when
     Response httpResponse = client.newCall(request).execute(); 
     //then
     int responseCode = httpResponse.code();
+    String body = httpResponse.body().string();
+    String url = parseUrl(body);
+    String gameId = parseBody(body);
+    
+    Assert.assertTrue(validUUIDCheck(gameId));
+    Assert.assertTrue(validURLCheck(url,gameId));
     Assert.assertEquals(200, responseCode);
   }
+  
+  
+  @Test
+  public void givenANewMoveHasBeenRequestedThen200Returned() throws IOException{
+    //given 
+    String gameId = createNewGame();
+    String pitId = "1";
 
-//  @Test
-//  public void givenANewMoveHasBeenRequestedThen200Returned() throws IOException{
-//    //given 
-//    String gameId = createNewGame();
-//    String pitId = "1";
-//
-//    RequestBody body = RequestBody.create(JSON, "{}");
-//    Request request = new Request.Builder()
-//        .url(createURLWithPortForMove(gameId,pitId))
-//        .post(body)
-//        .build();
-//    //when
-//    Response httpResponse = client.newCall(request).execute(); 
-//    //then
-//    int responseCode = httpResponse.code();
-//    Assert.assertEquals(200, responseCode);
-//  }
+    RequestBody body = RequestBody.create(JSON, "{}");
+    Request request = new Request.Builder()
+        .url(createURLWithPortForMove(gameId,pitId))
+        .post(body)
+        .build();
+    //when
+    Response httpResponse = client.newCall(request).execute(); 
+    //then
+    int responseCode = httpResponse.code();
+
+    Assert.assertEquals(200, responseCode);
+  }
   
   @Test
   public void givenANewMoveHasBeenRequestedWithAnInvalidGameIdThen500Returned() throws IOException{
@@ -86,38 +101,7 @@ public class KalahControllerIntegrationTest {
     Assert.assertEquals(500, responseCode);
   }
   
-  @Test
-  public void givenANewGameHasBeenRequestedThenAValidGameURLisReturned() throws IOException{
-    //given 
-    RequestBody requestBody = RequestBody.create(JSON, "{}");
-    Request request = new Request.Builder()
-        .url(createURLWithPort(NEW_GAME_ENDPOINT))
-        .post(requestBody)
-        .build();
-    //when
-    Response httpResponse = client.newCall(request).execute(); 
-    //then
-    String body = httpResponse.body().string();
-    String url = parseUrl(body);
-    String gameId = parseBody(body);
-    Assert.assertTrue(validURLCheck(url,gameId));
-  }
-
-  @Test
-  public void givenANewGameHasBeenRequestedThenAValidGameUUIDisReturned() throws IOException{
-    //given 
-    RequestBody requestBody = RequestBody.create(JSON, "{}");
-    Request request = new Request.Builder()
-        .url(createURLWithPort(NEW_GAME_ENDPOINT))
-        .post(requestBody)
-        .build();
-    //when
-    Response httpResponse = client.newCall(request).execute(); 
-    //then
-    String body = httpResponse.body().string();
-    String gameId = parseBody(body);
-    Assert.assertTrue(validUUIDCheck(gameId));
-  }
+ 
 
   private String createNewGame() throws IOException {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
@@ -152,7 +136,8 @@ public class KalahControllerIntegrationTest {
     }
     return false;
   }
-
+  
+  //breaks on reordering of Game model
   private String parseBody(String body) {
     String UUIDParts[] = body.split(":");
     String uuid = UUIDParts[4].substring(1, UUIDParts[4].length()-2);

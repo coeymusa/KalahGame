@@ -1,18 +1,25 @@
 package com.kalah.game.service;
 
 import java.util.UUID;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Document
 public class Game {
-
-  String uri;
-  UUID id;
   
+  @Field("uri")
+  private String uri;
+  @Id
+  @Field("_id")
+  private UUID _id; 
   @JsonIgnore
-  int[] pits;
+  @Field("pits")
+  private int[] pits;
   
-  Game(){
-    this.id = UUID.randomUUID();
+   Game(){
+    this._id = UUID.randomUUID();
     this.pits = new int[]{6,6,6,6,6,6,0,6,6,6,6,6,6,0};
   }
   
@@ -25,7 +32,7 @@ public class Game {
   }
 
   public UUID getId() {
-    return id;
+    return _id;
   }
   
   public String getUri() {
@@ -35,7 +42,5 @@ public class Game {
   public void setUri(String uri) {
     this.uri = uri;
   }
-
-  
   
 }

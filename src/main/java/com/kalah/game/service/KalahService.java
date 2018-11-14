@@ -1,7 +1,7 @@
 package com.kalah.game.service;
 
+import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import com.kalah.game.repository.KalahRepository;
 
 @Service
 public class KalahService {
-  private static final Logger LOGGER= Logger.getLogger(KalahService.class.getName());
+ // private static final // LOGGER // LOGGER= // LOGGER.get// LOGGER(KalahService.class.getName());
 
   @Value("${server.port:9000}")
   String port;
@@ -20,22 +20,22 @@ public class KalahService {
   public Game createNewGame() {
     Game game = new Game();
     game.setUri(buildUrlForNewGame(game.getId()));
-    LOGGER.info("Creating new game with id: " + game.getId().toString());
-    return game;
+    System.out.println("CREATED GAME WITH ID: " + game.getId());
+    // LOGGER.info("Creating new game with id: " + game.getId().toString());
+    return repo.save(game); 
   }
 
   public Game move(String gameId, int pitId) throws KalahGameException {
-    LOGGER.info("Moving seeds in pit: "+ pitId + "for game: " +gameId);
-    Game game = repo.findGame(gameId);
+    // LOGGER.info("Moving seeds in pit: "+ pitId + "for game: " +gameId);
+   
+    List<Game> games = repo.findAll();
+    Game foundGame = games.stream().filter(game -> game.getId().toString().contains(gameId)).findFirst()
+        .orElseThrow( () -> new KalahGameException("Cannot find game with an id: " + gameId));
+      
+    int[] movedPits = movePits(foundGame.getPits(), pitId);
+    foundGame.setPits(movedPits);
     
-    if(game == null){
-
-      throw new KalahGameException("Cannot find game with an id: " +gameId);
-    }
-    
-    int[] movedPits = movePits(game.getPits(), pitId);
-    game.setPits(movedPits);
-    return game;
+    return repo.save(foundGame);
   }
 
   private int[] movePits(int[] pits, int pitId) {
