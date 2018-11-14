@@ -4,17 +4,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import com.kalah.game.repository.KalahRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.kalah.game.repository.KalahRepository;
 
 public class KalahServiceTest {
 
@@ -29,6 +31,9 @@ public class KalahServiceTest {
 
   @Mock
   private KalahRepository repo;
+  
+  @Rule
+  public ExpectedException expectedEx = ExpectedException.none();
 
   @Before()
   public void setup() {
@@ -82,13 +87,15 @@ public class KalahServiceTest {
   }
 
   @Test(expected = KalahGameException.class)
-  public void shouldThrowErrorWhenGameCannotBeFound() throws KalahGameException {
+  public void  shouldThrowErrorWhenGameCannotBeFound() throws KalahGameException {
     // given
     String gameId = "2";
     int pitId = 1;
     // when
     underTest.move(gameId, pitId);
     // then
+    expectedEx.expect(KalahGameException.class);
+    expectedEx.expectMessage("Cannot find game with an id: " + gameId);
   }
 
   @Test
@@ -111,13 +118,34 @@ public class KalahServiceTest {
     Game result = captor.getValue();
     assertPitsAreCorrect(result.getPits(), expectedPits);
   }
+  
+  @Test
+  public void shouldMovePitsInACycle() throws KalahGameException {
+    // given
+    Game testGame = new Game();
+    int[] givenPits = new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0};
+    testGame.setPits(givenPits);
+    int pitId = 12;
+    String testGameId = testGame.getId().toString();
+    List<Game> gameList = new ArrayList<Game>();
+    gameList.add(testGame);
+    int[] expectedPits = new int[] {7, 7, 7, 7, 6, 6, 0, 6, 6, 6, 6, 0, 7, 1 };
+    given(repo.findAll()).willReturn(gameList);
+    // when
+    underTest.move(testGame.getId().toString(), pitId);
+    // then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
+    assertPitsAreCorrect(result.getPits(), expectedPits);
+  }
 
   @Test
   public void playerWonTheGameWhenTopSideisEmpty() throws KalahGameException {
     // given
     int pitId = 6;
     List<Game> gameList = new ArrayList<Game>();
-    testGame.setPits(new int[] {0, 0, 0, 0, 0, 6, 30, 6, 6, 6, 6, 6, 6, 0});
+    testGame.setPits(new int[]     {0, 0, 0, 0, 0, 6, 30, 6, 6, 6, 6, 6, 6, 0});
     int[] expectedPits = new int[] {0, 0, 0, 0, 0, 0, 31, 7, 7, 7, 7, 7, 6, 0};
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
@@ -134,10 +162,10 @@ public class KalahServiceTest {
   @Test
   public void playerWonTheGameWhenBottomSideisEmpty() throws KalahGameException {
     // given
-    int pitId = 6;
+    int pitId = 13;
     List<Game> gameList = new ArrayList<Game>();
-    testGame.setPits(new int[] {12, 13, 14, 15, 16, 17, 30, 0, 0, 0, 0, 0, 0, 6});
-    int[] expectedPits = new int[] {13, 14, 15, 16, 17, 31, 0, 0, 0, 0, 0, 0, 0, 0};
+    testGame.setPits(new int[]     {12, 13, 14, 15, 16, 17, 31, 0, 0, 0, 0, 0, 6, 0});
+    int[] expectedPits = new int[] {13, 14, 15, 16, 17,17 ,31, 0, 0, 0, 0, 0, 0, 1};
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     // when
@@ -150,6 +178,20 @@ public class KalahServiceTest {
     assertPitsAreCorrect(result.getPits(), expectedPits);
   }
 
+  @Test(expected = KalahGameException.class)
+  public void shouldThrowErrorWhenTryingToMoveOnWonGame() throws KalahGameException{
+    //given
+    int pitId = 13;
+    List<Game> gameList = new ArrayList<Game>();
+    testGame.setGameFinished(true);
+    gameList.add(testGame);
+    given(repo.findAll()).willReturn(gameList);
+    //when
+    underTest.move(testGameId, pitId);
+    //then
+    expectedEx.expect(KalahGameException.class);
+    expectedEx.expectMessage("Cannot make a move on an ended game: " + testGameId);
+  }
   private void assertPitsAreCorrect(int[] result, int[] expectedPits) {
     int i = 0;
     for (int pit : expectedPits) {
