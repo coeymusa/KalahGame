@@ -113,7 +113,7 @@ public class KalahServiceTest {
   }
 
   @Test
-  public void playerWonTheGameWhenOneSideEmpty() throws KalahGameException {
+  public void playerWonTheGameWhenTopSideisEmpty() throws KalahGameException {
     // given
     int pitId = 6;
     List<Game> gameList = new ArrayList<Game>();
@@ -129,7 +129,25 @@ public class KalahServiceTest {
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
     assertPitsAreCorrect(result.getPits(), expectedPits);
+  }
 
+  @Test
+  public void playerWonTheGameWhenBottomSideisEmpty() throws KalahGameException {
+    // given
+    int pitId = 6;
+    List<Game> gameList = new ArrayList<Game>();
+    testGame.setPits(new int[] {12, 13, 14, 15, 16, 17, 30, 0, 0, 0, 0, 0, 0, 6});
+    int[] expectedPits = new int[] {13, 14, 15, 16, 17, 31, 0, 0, 0, 0, 0, 0, 0, 0};
+    gameList.add(testGame);
+    given(repo.findAll()).willReturn(gameList);
+    // when
+    underTest.move(testGameId, pitId);
+    // then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
+    Assert.assertEquals(result.getGameFinished(), true);
+    assertPitsAreCorrect(result.getPits(), expectedPits);
   }
 
   private void assertPitsAreCorrect(int[] result, int[] expectedPits) {
