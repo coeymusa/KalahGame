@@ -10,12 +10,6 @@ cd clone https://github.com/coeymusa/KalahGame.git
 ```
 mvn clean install
 ```
-
-To run the project
-```
-cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
-```
- 
 Should run on port 900 by default, to change this add --server.port=*DESIRED_PORT*
 ### Installing
 
@@ -39,6 +33,14 @@ Installing MongoDB guide - https://docs.mongodb.com/manual/tutorial/install-mong
 mvn clean install 
 ```
 Should run both unit and integration tests
+
+## Run the game
+
+To run the project
+```
+cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
+```
+ 
 ## Rules of the game
 
 Each of the two players has six pits in front of him/her. To the right of the six pits, each player has a larger pit, his
