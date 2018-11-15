@@ -98,6 +98,7 @@ This will make a move and send a response
     ],
     "id": "49c0ad0b-b3da-4d26-81f1-594d4f5fb03b"
 }
+ ```
 Using the same gameId returned in the first request.Pit ids range from 1-14.
 
 
