@@ -76,7 +76,7 @@ public class MovementEngine {
       pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + pits[currentIndex + OPPOSITE_PIT];
       pits[currentIndex + OPPOSITE_PIT] = 0;
     } else {
-      LOGGER.info("Taking opponents stones in pit: " + (currentIndex + OPPOSITE_PIT));
+      LOGGER.info("Taking opponents stones in pit: " + (currentIndex - OPPOSITE_PIT));
       pits[TOP_HOUSE] = pits[TOP_HOUSE] + SINGLE_STONE_PIT; // always one due to +1 last move
       pits[currentIndex] = 0;
       pits[TOP_HOUSE] = pits[TOP_HOUSE] + pits[currentIndex - OPPOSITE_PIT];

@@ -1,16 +1,13 @@
 package com.kalah.game.service;
 
-public class KalahGameException extends Exception {
+public class KalahGameException extends RuntimeException {
 
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
 
-  public KalahGameException() {}
-
-  public KalahGameException(String e)
-  {
-     super(e);
+  public KalahGameException(String string) {
+    super(string);
   }
 }
