@@ -122,17 +122,31 @@ public class KalahService {
     int counter = index + 1; //starting position after picking up at pit
     Player player = whichPlayerIsMoving(pitId-1);
 
-    for (int stonesDropped = 1; stonesDropped <= stonesInPit; stonesDropped++) { 
-        if(counter == ARRAY_LIMIT){
-          counter = 0;
-        }
+    for (int stonesDropped = 1; stonesDropped <= stonesInPit;) { 
+      if(counter == ARRAY_LIMIT){
+        counter = 0;
+      }
+      if(isNotOpponentsHouse(player, counter)){
         pits[counter] = oldPits[counter] + 1;
         if(isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(counter , stonesDropped, player, pits,stonesInPit)){
           takeOpponentsStones(pits,counter, player);
         }
-        counter++;
+        stonesDropped++;
+      }
+      counter++;
     }
     return pits;
+  }
+
+  private boolean isNotOpponentsHouse(Player player, int counter) {
+    if(player == Player.TOP && counter != BOTTOM_HOUSE){
+      return true;
+    }
+    
+    if(player == Player.BOTTOM && counter != TOP_HOUSE){
+      return true;
+    }
+    return false;
   }
 
   private boolean isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(int currentIndex, int stonesDropped, Player player, int[] pits, int stonesInPit) {
@@ -162,14 +176,6 @@ public class KalahService {
       pits[currentIndex - OPPOSITE_PIT] = 0;
     }
   }
-
-  private int[] takeOppositePitStonesAndPlaceInOwnHouse(int[] pits, int[] oldPits, int counterFromReset, Player player) {
-    pits[counterFromReset + OPPOSITE_PIT] = 0;
-
-    return pits;
-
-  }
-
 
   private String buildUrlForNewGame(UUID gameId) {
     return "http://localhost:" + port + "/games/" + gameId.toString();
