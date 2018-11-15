@@ -10,24 +10,41 @@ cd clone https://github.com/coeymusa/KalahGame.git
 ```
 mvn clean install
 ```
-
-To run the project
-```
-cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
-```
- 
 Should run on port 900 by default, to change this add --server.port=*DESIRED_PORT*
 ### Installing
 
 Instance of MongoDB running locally
 
-Installing MongoDB locally - https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+Download MongoDB - https://www.mongodb.com/download-center/community
+
+Unzip the downloaded folder
+
+Open the unzipped folder and find the ../bin directory
+
+Run the mongo executable within the ./bin
+```
+./mongo.exe
+```
+
+Installing MongoDB guide - https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
 
 ## Running the tests
 ```
 mvn clean install 
 ```
 Should run both unit and integration tests
+
+## Run the game
+
+To run the project
+```
+cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
+```
+
+To specify port
+```
+-java -jar KalahGame-0.0.1-SNAPSHOT.jar --server.port=PORT
+ ```
 ## Rules of the game
 
 Each of the two players has six pits in front of him/her. To the right of the six pits, each player has a larger pit, his
@@ -53,13 +70,40 @@ To create a new game open a terminal and run the command
 ```
 curl --header "Content-Type: application/json" \ --request POST \ http://<host>:<port>/games
 ```
-This will create a new game and send a response of 
-HTTP code: 201
-Response Body: { "id": "1234", "uri": "http://<host>:<port>/games/1234" }
-
+This will create a new game and send a response 
+```
+{
+ "uri":"http://localhost:9001/games/49c0ad0b-b3da-4d26-81f1-594d4f5fb03b",
+ "id":"49c0ad0b-b3da-4d26-81f1-594d4f5fb03b"
+}
+ ```
 To make a move 
 ```
 curl --header "Content-Type: application/json" \ --request PUT \ http://<host>:<port>/games/{gameId}/pits/{pitId}
+ ```
+ 
+This will make a move and send a response 
+```
+{
+    "uri": "http://localhost:9001/games/49c0ad0b-b3da-4d26-81f1-594d4f5fb03b",
+    "status": [
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        1,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        0
+    ],
+    "id": "49c0ad0b-b3da-4d26-81f1-594d4f5fb03b"
+}
  ```
 Using the same gameId returned in the first request.Pit ids range from 1-14.
 
