@@ -39,7 +39,7 @@ public class KalahService {
   public Game move(String gameId, int pitId) throws KalahGameException {
     // LOGGER.info("Moving seeds in pit: "+ pitId + "for game: " +gameId);
 
-    List<Game> repoGames = repo.findAll();
+     List<Game> repoGames = repo.findAll();
     Game game =
         repoGames.stream().filter(currentGame -> currentGame.getId().toString().contains(gameId)).findFirst()
         .orElseThrow(() -> new KalahGameException("Cannot find game with an id: " + gameId));

@@ -226,7 +226,7 @@ public class KalahServiceTest {
     int pitId = 6;
     List<Game> gameList = new ArrayList<Game>();
     testGame.setStatus(new int[]   {0, 0, 0, 0, 0, 12, 1000 ,12, 13, 14, 15, 16, 17, 31});
-    int[] expectedPits = new int[] {1, 1, 1, 1, 0, 0, 1018, 13, 14, 15, 0, 17, 18, 31}; 
+    int[] expectedPits = new int[] {1, 1, 1, 1, 0, 0, 1019, 13, 14, 15, 16, 0, 18, 31}; 
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     //when
@@ -243,8 +243,8 @@ public class KalahServiceTest {
     //given
     int pitId = 13;
     List<Game> gameList = new ArrayList<Game>();
-    testGame.setStatus(new int[]   {0, 0, 0, 0, 0, 12, 1000 ,12, 13, 14, 15, 16, 16, 31});
-    int[] expectedPits = new int[] {1, 1, 1, 0, 0, 0, 1018, 13, 14, 15, 0, 17, 18, 32}; 
+    testGame.setStatus(new int[]   {0, 0, 0, 0, 0, 0, 1000 ,12, 13, 14, 15, 16, 13, 31});
+    int[] expectedPits = new int[] {1, 1, 1, 1, 1, 0, 1000, 13, 14, 15, 16, 17, 0, 34}; 
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     //when
