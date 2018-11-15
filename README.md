@@ -16,11 +16,6 @@ To run the project
 cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
 ```
  
-OR
-```
-java -jar KalahGame-0.0.1-SNAPSHOT.jar - on given jar
-```
-
 Should run on port 900 by default, to change this add --server.port=*DESIRED_PORT*
 ### Installing
 
