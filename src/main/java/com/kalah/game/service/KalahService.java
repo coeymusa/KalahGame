@@ -36,7 +36,7 @@ public class KalahService {
   }
 
   public Game move(String gameId, int pitId) throws KalahGameException {
-    LOGGER.info("Moving seeds in pit: " + pitId + "for game: " + gameId);
+    LOGGER.info("Moving seeds in pit: " + pitId + " for game: " + gameId);
 
     List<Game> repoGames = repo.findAll();
     Game game = repoGames.stream()
