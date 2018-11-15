@@ -156,7 +156,7 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
-    Assert.assertEquals(result.getWinningRow(), Winner.TOP);
+    Assert.assertEquals(result.getWinningRow(), Player.TOP);
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
   
@@ -176,7 +176,7 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
-    Assert.assertEquals(result.getWinningRow(), Winner.BOTTOM);
+    Assert.assertEquals(result.getWinningRow(), Player.BOTTOM);
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
   
@@ -196,7 +196,7 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
-    Assert.assertEquals(result.getWinningRow(), Winner.TOP);
+    Assert.assertEquals(result.getWinningRow(), Player.TOP);
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
   
@@ -216,7 +216,43 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
-    Assert.assertEquals(result.getWinningRow(), Winner.BOTTOM);
+    Assert.assertEquals(result.getWinningRow(), Player.BOTTOM);
+    assertPitsAreCorrect(result.getStatus(), expectedPits);
+  }
+  
+  @Test
+  public void shouldMoveOppositePitsStonesToBottomHouse() throws KalahGameException{
+    //given
+    int pitId = 6;
+    List<Game> gameList = new ArrayList<Game>();
+    testGame.setStatus(new int[]   {0, 0, 0, 0, 0, 12, 1000 ,12, 13, 14, 15, 16, 17, 31});
+    int[] expectedPits = new int[] {1, 1, 1, 1, 0, 0, 1019, 13, 14, 15, 16, 0, 18, 31}; 
+    gameList.add(testGame);
+    given(repo.findAll()).willReturn(gameList);
+    //when
+    underTest.move(testGameId, pitId);
+    //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
+    assertPitsAreCorrect(result.getStatus(), expectedPits);
+  }
+  
+  @Test
+  public void shouldMoveOppositePitsStonesToTopHouse() throws KalahGameException{
+    //given
+    int pitId = 13;
+    List<Game> gameList = new ArrayList<Game>();
+    testGame.setStatus(new int[]   {0, 0, 0, 0, 0, 0, 1000 ,12, 13, 14, 15, 16, 13, 31});
+    int[] expectedPits = new int[] {1, 1, 1, 1, 1, 0, 1000, 13, 14, 15, 16, 17, 0, 34}; 
+    gameList.add(testGame);
+    given(repo.findAll()).willReturn(gameList);
+    //when
+    underTest.move(testGameId, pitId);
+    //then
+    ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
+    verify(repo, times(1)).save(captor.capture());
+    Game result = captor.getValue();
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
 
@@ -243,7 +279,7 @@ public class KalahServiceTest {
     int pitId = 13;
     List<Game> gameList = new ArrayList<Game>();
     testGame.setGameFinished(true);
-    testGame.setWinningRow(Winner.TOP);
+    testGame.setWinningRow(Player.TOP);
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     expectedEx.expect(KalahGameException.class);
@@ -269,7 +305,7 @@ public class KalahServiceTest {
     underTest.move(testGameId, pitId);
     //then
   }
-  
+    
   private void assertPitsAreCorrect(int[] result, int[] expectedPits) {
     int i = 0;
     for (int pit : expectedPits) {
