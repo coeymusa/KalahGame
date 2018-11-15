@@ -1,23 +1,32 @@
 package com.kalah.game.service;
 
-import com.kalah.game.repository.KalahRepository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.kalah.game.repository.KalahRepository;
 
 @Service
 public class KalahService {
   // private static final // LOGGER // LOGGER= // LOGGER.get// LOGGER(KalahService.class.getName());
 
   private static final int[] INVALID_PITS = new int[]{6,13};
+
+  private static final int TOP_HOUSE = 13;
+  private static final int BOTTOM_HOUSE = 6;
+  private static final int OPPOSITE_PIT = 7;
+  private static final int EMPTY_PIT = 0;
+  private static final int SINGLE_STONE_PIT = 1;
+  private static final int ARRAY_LIMIT= 14;
   @Value("${server.port:9000}")
   String port;
 
   @Autowired
   private KalahRepository repo;
+
+
 
   public Game createNewGame() {
     Game game = new Game();
@@ -44,8 +53,8 @@ public class KalahService {
     }
 
     int[] movedPits = movePits(game.getStatus(), pitId);
-    
-    Winner gameWinner = playerWonGame(movedPits);
+
+    Player gameWinner = playerWonGame(movedPits);
     if (gameWinner != null) {
       game.setWinningRow(gameWinner);
       game.setGameFinished(true);
@@ -55,6 +64,17 @@ public class KalahService {
     return repo.save(game);
   }
 
+  private Player whichPlayerIsMoving(int pitId) {
+    if(pitId < 6){
+      return Player.BOTTOM;
+    }
+
+    if(pitId > 6){
+      return Player.TOP;
+    }
+    return null;
+  }
+
   private boolean requestedMoveInvalid(int[] pits, int pitId) {
     if(pits[pitId -1] == 0 || pitId-1 == INVALID_PITS[0] || pitId-1 == INVALID_PITS[1]){
       return true;
@@ -62,7 +82,7 @@ public class KalahService {
     return false;
   }
 
-  private Winner playerWonGame(int[] movedPits) {
+  private Player playerWonGame(int[] movedPits) {
     int[] copyOfPits = movedPits.clone();
     int[] topRow = Arrays.copyOfRange(movedPits, 7, 13);
     int[] bottomRow = Arrays.copyOfRange(movedPits, 0, 6);
@@ -70,26 +90,25 @@ public class KalahService {
 
     if(Arrays.equals(winningRow, topRow)){
       for(int remaningPit: bottomRow){
-        copyOfPits[6] = copyOfPits[13] + remaningPit;
+        copyOfPits[BOTTOM_HOUSE] = copyOfPits[TOP_HOUSE] + remaningPit;
       }
-      
-      if(copyOfPits[6] > movedPits[13]){
-        return Winner.BOTTOM;
+      if(copyOfPits[BOTTOM_HOUSE] > movedPits[TOP_HOUSE]){
+        return Player.BOTTOM;
       } 
-      if(copyOfPits[6] < movedPits[13]){
-        return Winner.TOP;
+      if(copyOfPits[BOTTOM_HOUSE] < movedPits[TOP_HOUSE]){
+        return Player.TOP;
       } 
     }
 
     if(Arrays.equals(winningRow, bottomRow)){
       for(int remaningPit: topRow){
-        copyOfPits[13] = copyOfPits[13] + remaningPit;
+        copyOfPits[TOP_HOUSE] = copyOfPits[TOP_HOUSE] + remaningPit;
       }
-      if(copyOfPits[6] > movedPits[13]){
-        return Winner.BOTTOM;
+      if(copyOfPits[BOTTOM_HOUSE] > movedPits[TOP_HOUSE]){
+        return Player.BOTTOM;
       } 
-      if(copyOfPits[6] < movedPits[13]){
-        return Winner.TOP;
+      if(copyOfPits[BOTTOM_HOUSE] < movedPits[TOP_HOUSE]){
+        return Player.TOP;
       } 
     }
     return null;
@@ -97,21 +116,60 @@ public class KalahService {
 
   private int[] movePits(int[] pits, int pitId) {
     int index = pitId - 1;
+    int stonesInPit = pits[index];
     pits[index] = 0;
     int[] oldPits = pits.clone();
-    int counterFromReset = 0;
+    int counter = index + 1; //starting position after picking up at pit
+    Player player = whichPlayerIsMoving(pitId-1);
 
-    for (int i = 1; i < 7; i++) {
-      //if next index is outOfBounds cycle back to 0
-      if(index + i > 13){
-        pits[0 + counterFromReset] = oldPits[0 + counterFromReset] + 1;
-        counterFromReset++;
-      } else {
-        pits[index + i] = oldPits[index + i] + 1; //index + 1 due to user is shown array starting at 1 not 0
-      }
+    for (int stonesDropped = 1; stonesDropped <= stonesInPit; stonesDropped++) { 
+        if(counter == ARRAY_LIMIT){
+          counter = 0;
+        }
+        pits[counter] = oldPits[counter] + 1;
+        if(isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(counter , stonesDropped, player, pits,stonesInPit)){
+          takeOpponentsStones(pits,counter, player);
+        }
+        counter++;
     }
     return pits;
   }
+
+  private boolean isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(int currentIndex, int stonesDropped, Player player, int[] pits, int stonesInPit) {
+    //last stone
+    if( stonesDropped == stonesInPit){
+      if(player == Player.BOTTOM && currentIndex < BOTTOM_HOUSE && pits[currentIndex] == SINGLE_STONE_PIT){
+        return true;
+      }
+
+      if(player == Player.TOP && currentIndex > BOTTOM_HOUSE  && pits[currentIndex] == SINGLE_STONE_PIT){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private void takeOpponentsStones(int[] pits, int currentIndex, Player player) {
+    if(player == Player.BOTTOM){
+      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + SINGLE_STONE_PIT ; //always one due to being placed in empty pit
+      pits[currentIndex] = 0;
+      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + pits[currentIndex + OPPOSITE_PIT] ;
+      pits[currentIndex + OPPOSITE_PIT] = 0;
+    } else {
+      pits[TOP_HOUSE] = pits[TOP_HOUSE] + SINGLE_STONE_PIT ; //always one due to being placed in empty pit
+      pits[currentIndex] = 0;
+      pits[TOP_HOUSE] = pits[TOP_HOUSE] + pits[currentIndex - OPPOSITE_PIT] ;
+      pits[currentIndex - OPPOSITE_PIT] = 0;
+    }
+  }
+
+  private int[] takeOppositePitStonesAndPlaceInOwnHouse(int[] pits, int[] oldPits, int counterFromReset, Player player) {
+    pits[counterFromReset + OPPOSITE_PIT] = 0;
+
+    return pits;
+
+  }
+
 
   private String buildUrlForNewGame(UUID gameId) {
     return "http://localhost:" + port + "/games/" + gameId.toString();
