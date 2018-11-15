@@ -1,4 +1,4 @@
-package com.kalah.game.service;
+package com.kalah.game.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class Game {
   @JsonIgnore
   private Player winningRow;
 
-  Game() {
+  public Game() {
     this._id = UUID.randomUUID();
     this.status = new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0};
     this.gameFinished = false;
@@ -29,7 +29,7 @@ public class Game {
   public int[] getStatus() {
     return status;
   }
-  
+
   public Player getWinningRow() {
     return winningRow;
   }

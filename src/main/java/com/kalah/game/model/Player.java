@@ -1,4 +1,4 @@
-package com.kalah.game.service;
+package com.kalah.game.model;
 
 public enum Player {
 

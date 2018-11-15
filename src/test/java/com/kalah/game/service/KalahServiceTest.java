@@ -16,6 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.kalah.game.model.Game;
+import com.kalah.game.model.Player;
 import com.kalah.game.repository.KalahRepository;
 
 public class KalahServiceTest {
