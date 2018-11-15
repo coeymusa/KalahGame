@@ -68,6 +68,34 @@ curl --header "Content-Type: application/json" \ --request PUT \ http://<host>:<
  ```
 Using the same gameId returned in the first request and pit id from 1-14.
 
+
+ 
+## Error Handling
+The rules allow us to start and finish games. These rules make some moves invalid and in this situation a 500 response is returned. Below is a few games of invalid move requests.
+
+Move is requested on a finished game then a 500 will be returned with an error message
+ ```
+"status": 500,
+"error": "Internal Server Error",
+"message": "Cannot make a move on an ended game: 415b0cb2-05c4-4a31-a758-3b3d9dd1b5c2. Winner: BOTTOM",
+"path": "/games/415b0cb2-05c4-4a31-a758-3b3d9dd1b5c2/pits/2"
+ ```
+ 
+Move is requested on a pit which is a "House" e.g 7 or 14 a 500 response should be returned
+ ```
+"status": 500,
+"error": "Internal Server Error",
+"message": "Requested move invalid for game: 09a9ed4a-0ef0-4915-9e9c-9891f0336e9b. Pit 7 is empty or a house.",
+"path": "/games/09a9ed4a-0ef0-4915-9e9c-9891f0336e9b/pits/7"
+ ```
+ 
+ Move is requested for a pit with no stones
+  ```
+"status": 500,
+"error": "Internal Server Error",
+"message": "Requested move invalid for game: 09a9ed4a-0ef0-4915-9e9c-9891f0336e9b. Pit 1 is empty or a house.",
+"path": "/games/09a9ed4a-0ef0-4915-9e9c-9891f0336e9b/pits/1"
+ ```
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
