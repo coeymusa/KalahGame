@@ -66,12 +66,12 @@ To make a move
 ```
 curl --header "Content-Type: application/json" \ --request PUT \ http://<host>:<port>/games/{gameId}/pits/{pitId}
  ```
-Using the same gameId returned in the first request and pit id from 1-14.
+Using the same gameId returned in the first request.Pit ids range from 1-14.
 
 
  
 ## Error Handling
-The rules allow us to start and finish games. These rules make some moves invalid and in this situation a 500 response is returned. Below is a few games of invalid move requests.
+The rules allow us to start and finish games. These rules make some moves invalid and in this situation a 500 response is returned. Below is a few examples of invalid move requests responses.
 
 Move is requested on a finished game then a 500 will be returned with an error message
  ```
