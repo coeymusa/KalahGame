@@ -64,14 +64,40 @@ To create a new game open a terminal and run the command
 ```
 curl --header "Content-Type: application/json" \ --request POST \ http://<host>:<port>/games
 ```
-This will create a new game and send a response of 
-HTTP code: 201
-Response Body: { "id": "1234", "uri": "http://<host>:<port>/games/1234" }
-
+This will create a new game and send a response 
+```
+{
+ "uri":"http://localhost:9001/games/49c0ad0b-b3da-4d26-81f1-594d4f5fb03b",
+ "id":"49c0ad0b-b3da-4d26-81f1-594d4f5fb03b"
+}
+ ```
 To make a move 
 ```
 curl --header "Content-Type: application/json" \ --request PUT \ http://<host>:<port>/games/{gameId}/pits/{pitId}
  ```
+ 
+This will make a move and send a response 
+```
+{
+    "uri": "http://localhost:9001/games/49c0ad0b-b3da-4d26-81f1-594d4f5fb03b",
+    "status": [
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        1,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        0
+    ],
+    "id": "49c0ad0b-b3da-4d26-81f1-594d4f5fb03b"
+}
 Using the same gameId returned in the first request.Pit ids range from 1-14.
 
 
