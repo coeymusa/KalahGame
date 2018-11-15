@@ -46,7 +46,7 @@ public class FullGameSimulation {
   }
 
   @Test
-  public void fullGameSimulationWhereBottomRowWins() throws IOException, JSONException{
+  public void fullGameSimulationWhereTopRowWins() throws IOException, JSONException{
     gameId = createGame();
     submitMove(1); //Player 1
     submitMoveError(7); //error

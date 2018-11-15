@@ -63,24 +63,32 @@ public class KalahService {
   }
 
   private Winner playerWonGame(int[] movedPits) {
+    int[] copyOfPits = movedPits.clone();
     int[] topRow = Arrays.copyOfRange(movedPits, 7, 13);
     int[] bottomRow = Arrays.copyOfRange(movedPits, 0, 6);
     int[] winningRow = new int[]{0,0,0,0,0,0};
 
     if(Arrays.equals(winningRow, topRow)){
-      if(movedPits[6] > movedPits[13]){
+      for(int remaningPit: bottomRow){
+        copyOfPits[6] = copyOfPits[13] + remaningPit;
+      }
+      
+      if(copyOfPits[6] > movedPits[13]){
         return Winner.BOTTOM;
       } 
-      if(movedPits[6] < movedPits[13]){
+      if(copyOfPits[6] < movedPits[13]){
         return Winner.TOP;
       } 
     }
 
     if(Arrays.equals(winningRow, bottomRow)){
-      if(movedPits[6] > movedPits[13]){
+      for(int remaningPit: topRow){
+        copyOfPits[13] = copyOfPits[13] + remaningPit;
+      }
+      if(copyOfPits[6] > movedPits[13]){
         return Winner.BOTTOM;
       } 
-      if(movedPits[6] < movedPits[13]){
+      if(copyOfPits[6] < movedPits[13]){
         return Winner.TOP;
       } 
     }
