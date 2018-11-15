@@ -17,6 +17,8 @@ public class Game {
   private int[] status;
   @JsonIgnore
   private boolean gameFinished;
+  @JsonIgnore
+  private Winner winningRow;
 
   Game() {
     this._id = UUID.randomUUID();
@@ -26,6 +28,14 @@ public class Game {
 
   public int[] getStatus() {
     return status;
+  }
+  
+  public Winner getWinningRow() {
+    return winningRow;
+  }
+
+  public void setWinningRow(Winner winningRow) {
+    this.winningRow = winningRow;
   }
 
   public void setStatus(int[] status) {

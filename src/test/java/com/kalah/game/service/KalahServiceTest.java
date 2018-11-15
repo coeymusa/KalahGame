@@ -141,12 +141,12 @@ public class KalahServiceTest {
   }
 
   @Test
-  public void playerWinsTheGameWhenTopSideisEmpty() throws KalahGameException {
+  public void topRowWinsTheGameWhenTopSideisEmpty() throws KalahGameException {
     // given
     int pitId = 6;
     List<Game> gameList = new ArrayList<Game>();
-    testGame.setStatus(new int[]     {0, 0, 0, 0, 0, 6, 30, 6, 6, 6, 6, 6, 6, 0});
-    int[] expectedPits = new int[] {0, 0, 0, 0, 0, 0, 31, 7, 7, 7, 7, 7, 6, 0};
+    testGame.setStatus(new int[]     {0, 0, 0, 0, 0, 6, 30, 6, 6, 6, 6, 6, 6, 100});
+    int[] expectedPits = new int[] {0, 0, 0, 0, 0, 0, 31, 7, 7, 7, 7, 7, 6, 100};
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     // when
@@ -156,11 +156,12 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
+    Assert.assertEquals(result.getWinningRow(), Winner.TOP);
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
   
   @Test
-  public void playerWinsTheGameWhenBottomSideisEmpty() throws Exception {
+  public void bottoomRowWinsGameWhenBottomSideisEmpty() throws Exception {
     // given
     int pitId = 13;
     List<Game> gameList = new ArrayList<Game>();
@@ -175,6 +176,7 @@ public class KalahServiceTest {
     verify(repo, times(1)).save(captor.capture());
     Game result = captor.getValue();
     Assert.assertEquals(result.getGameFinished(), true);
+    Assert.assertEquals(result.getWinningRow(), Winner.BOTTOM);
     assertPitsAreCorrect(result.getStatus(), expectedPits);
   }
 
@@ -201,10 +203,11 @@ public class KalahServiceTest {
     int pitId = 13;
     List<Game> gameList = new ArrayList<Game>();
     testGame.setGameFinished(true);
+    testGame.setWinningRow(Winner.TOP);
     gameList.add(testGame);
     given(repo.findAll()).willReturn(gameList);
     expectedEx.expect(KalahGameException.class);
-    expectedEx.expectMessage("Cannot make a move on an ended game: " + testGameId);
+    expectedEx.expectMessage("Cannot make a move on an ended game: " + testGameId + ". Winner: " + testGame.getWinningRow());
     //when
     underTest.move(testGameId, pitId);
     //then

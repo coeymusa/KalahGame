@@ -107,7 +107,7 @@ public class FullGameSimulation {
 
   private void verifyWin(String gameId2) throws IOException, JSONException {
     int pitId = 7;
-    String expectedErrorMessage = "Cannot make a move on an ended game: " + gameId;
+    String expectedErrorMessage = "Cannot make a move on an ended game: " + gameId +". Winner: TOP";
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPortForMove(gameId,pitId))
