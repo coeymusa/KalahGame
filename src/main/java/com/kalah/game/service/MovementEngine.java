@@ -3,7 +3,9 @@ package com.kalah.game.service;
 import com.kalah.game.model.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MovementEngine {
   private final Logger LOGGER = LoggerFactory.getLogger(getClass());
   private static final int TOP_HOUSE = 13;
@@ -69,14 +71,13 @@ public class MovementEngine {
   private void takeOpponentsStones(int[] pits, int currentIndex, Player player) {
     if (player == Player.BOTTOM) {
       LOGGER.info("Taking opponents stones in pit: " + (currentIndex + OPPOSITE_PIT));
-      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + SINGLE_STONE_PIT; // always one due to being placed
-      // in empty pit
+      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + SINGLE_STONE_PIT; // always one due to +1 last move
       pits[currentIndex] = 0;
       pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + pits[currentIndex + OPPOSITE_PIT];
       pits[currentIndex + OPPOSITE_PIT] = 0;
     } else {
       LOGGER.info("Taking opponents stones in pit: " + (currentIndex + OPPOSITE_PIT));
-      pits[TOP_HOUSE] = pits[TOP_HOUSE] + SINGLE_STONE_PIT; // always one due to being placed in empty pit
+      pits[TOP_HOUSE] = pits[TOP_HOUSE] + SINGLE_STONE_PIT; // always one due to +1 last move
       pits[currentIndex] = 0;
       pits[TOP_HOUSE] = pits[TOP_HOUSE] + pits[currentIndex - OPPOSITE_PIT];
       pits[currentIndex - OPPOSITE_PIT] = 0;

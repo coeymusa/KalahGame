@@ -20,7 +20,6 @@ public class MoveValidator {
       throw new KalahGameException("Requested move invalid for game: " + gameId + ". Pit " + pitId
           + " is empty or a house.");
     }
-
   }
 
   private boolean requestedMoveInvalid(int[] pits, int pitId) {
