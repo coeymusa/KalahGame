@@ -40,7 +40,11 @@ To run the project
 ```
 cd target -java -jar KalahGame-0.0.1-SNAPSHOT.jar
 ```
- 
+
+To specify port
+```
+-java -jar KalahGame-0.0.1-SNAPSHOT.jar --server.port=PORT
+ ```
 ## Rules of the game
 
 Each of the two players has six pits in front of him/her. To the right of the six pits, each player has a larger pit, his
