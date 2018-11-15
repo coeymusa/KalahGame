@@ -21,7 +21,18 @@ Should run on port 900 by default, to change this add --server.port=*DESIRED_POR
 
 Instance of MongoDB running locally
 
-Installing MongoDB locally - https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+Download MongoDB - https://www.mongodb.com/download-center/community
+
+Unzip the downloaded folder
+
+Open the unzipped folder and find the ../bin directory
+
+Run the mongo executable within the ./bin
+```
+./mongo.exe
+```
+
+Installing MongoDB guide - https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
 
 ## Running the tests
 ```
