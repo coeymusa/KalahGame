@@ -11,7 +11,7 @@ public class GameDeciderTest {
     // given
     int[] givenPits = new int[] {0, 0, 0, 0, 0, 0, 31, 7, 7, 7, 7, 7, 6, 100};
     // when
-    Player winner = GameDecider.decideWinner(givenPits);
+    Player winner = GameDecider.findWinner(givenPits);
     // then
     Assert.assertEquals(Player.TOP, winner);
   }
@@ -21,7 +21,7 @@ public class GameDeciderTest {
     // given
     int[] givenPits = new int[] {13, 14, 15, 16, 17, 17, 31, 0, 0, 0, 0, 0, 0, 1};
     // when
-    Player winner = GameDecider.decideWinner(givenPits);
+    Player winner = GameDecider.findWinner(givenPits);
     // then
     Assert.assertEquals(Player.BOTTOM, winner);
   }
@@ -31,7 +31,7 @@ public class GameDeciderTest {
     // given
     int[] givenPits = new int[] {0, 0, 0, 0, 0, 0, 1, 13, 14, 15, 16, 17, 17, 31};
     // when
-    Player winner = GameDecider.decideWinner(givenPits);
+    Player winner = GameDecider.findWinner(givenPits);
     // then
     Assert.assertEquals(Player.TOP, winner);
   }
@@ -41,7 +41,7 @@ public class GameDeciderTest {
     // given
     int[] givenPits = new int[] {0, 0, 0, 0, 0, 0, 1001, 13, 14, 15, 16, 17, 17, 31};
     // when
-    Player winner = GameDecider.decideWinner(givenPits);
+    Player winner = GameDecider.findWinner(givenPits);
     // then
     Assert.assertEquals(Player.BOTTOM, winner);
   }

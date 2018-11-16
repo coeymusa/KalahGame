@@ -36,6 +36,7 @@ public class Game {
 
   public void setWinningRow(Player winningRow) {
     this.winningRow = winningRow;
+    this.gameFinished = true;
   }
 
   public void setStatus(int[] status) {
@@ -61,5 +62,5 @@ public class Game {
   public boolean getGameFinished() {
     return gameFinished;
   }
-
+  
 }

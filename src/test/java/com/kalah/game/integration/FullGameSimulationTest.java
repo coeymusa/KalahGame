@@ -1,13 +1,7 @@
 package com.kalah.game.integration;
 
-import com.kalah.game.KalahGameApplication;
-import com.kalah.game.repository.KalahRepository;
 import java.io.IOException;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -15,11 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.kalah.game.KalahGameApplication;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {KalahGameApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -27,20 +26,22 @@ public class FullGameSimulationTest {
   private static final String NEW_GAME_ENDPOINT = "/games";
   private static final String UUID_REGEX =
       "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; // https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
-  private OkHttpClient client = new OkHttpClient();
+  private OkHttpClient client = null;
   private static final int ACCEPTED_HTTP_STATUS = 201;
   public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-
   private String gameId;
+  
   @LocalServerPort
   private int port;
 
-  @Autowired
-  private KalahRepository repo;
-
   @Before()
   public void setup() {
+    client = new OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build();
+
     MockitoAnnotations.initMocks(this);
   }
 

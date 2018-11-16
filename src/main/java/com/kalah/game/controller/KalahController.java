@@ -23,17 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/games")
 public class KalahController {
   private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
+  private static final int ACCEPTED_HTTP_STATUS = 201;
+  private ObjectMapper mapper = new ObjectMapper().registerModule(new JsonViewModule());
+  
   @Autowired
   KalahService kalahService;
 
   @RequestMapping(method = RequestMethod.POST)
   public @ResponseBody ResponseEntity<String> createNewGame() throws JsonProcessingException {
     LOGGER.info("Received request to make new game");
-    ObjectMapper mapper = new ObjectMapper().registerModule(new JsonViewModule());
     Game newGame = kalahService.createNewGame();
-    return ResponseEntity.status(201).body(mapper
-        .writeValueAsString(JsonView.with(newGame).onClass(Game.class, match().exclude("status"))));
+    return ResponseEntity.status(ACCEPTED_HTTP_STATUS)
+        .body(mapper.writeValueAsString(JsonView.with(newGame)
+            .onClass(Game.class, match()
+                .exclude("status"))
+            ));
   }
 
   @RequestMapping(value = "{gameId}/pits/{pitId}", method = RequestMethod.PUT)

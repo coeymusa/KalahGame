@@ -22,7 +22,8 @@ public class MoveValidator {
   }
 
   private static boolean requestedMoveInvalid(int[] pits, int pitId) {
-    if (pits[pitId - 1] == 0 || pitId - 1 == INVALID_PITS[0] || pitId - 1 == INVALID_PITS[1]) {
+    int pitArrayId = pitId -1;
+    if (pits[pitArrayId] == 0 || pitArrayId  == INVALID_PITS[0] || pitArrayId == INVALID_PITS[1]) {
       return true;
     }
     return false;

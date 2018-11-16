@@ -1,6 +1,7 @@
 package com.kalah.game.integration;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -11,7 +12,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.RestTemplate;
 import com.kalah.game.KalahGameApplication;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -26,7 +29,7 @@ public class KalahIntegrationTest {
   private static final int ACCEPTED_HTTP_STATUS = 201;
   private static final int OK_HTTP_STATUS = 200;
   private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; //https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
-  private OkHttpClient client = new OkHttpClient();
+  private OkHttpClient client =  null;
   public static final MediaType JSON  = MediaType.parse("application/json; charset=utf-8");
 
   @LocalServerPort
@@ -34,6 +37,11 @@ public class KalahIntegrationTest {
 
   @Before()
   public void setup(){
+    client = new OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build();
     MockitoAnnotations.initMocks(this);
   }
 

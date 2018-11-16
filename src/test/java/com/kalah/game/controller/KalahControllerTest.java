@@ -10,8 +10,7 @@ import org.mockito.MockitoAnnotations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kalah.game.service.KalahGameException;
 import com.kalah.game.service.KalahService;
-
-
+                                                     
 public class KalahControllerTest {
 
   @InjectMocks

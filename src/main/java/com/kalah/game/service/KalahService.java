@@ -28,7 +28,7 @@ public class KalahService {
     Game game = new Game();
     game.setUri(buildUrlForNewGame(game.getId()));
     System.out.println("CREATED GAME WITH ID: " + game.getId());
-    LOGGER.info("Creating new game with id: " + game.getId().toString());
+    LOGGER.info("Created new game with id: " + game.getId().toString());
     return repo.save(game);
   }
 
@@ -43,15 +43,14 @@ public class KalahService {
     MoveValidator.validateMove(game, pitId);
 
     int[] movedPits = movementEngine.movePits(game.getStatus(), pitId);
-
-    Player gameWinner = GameDecider.decideWinner(movedPits);
+    game.setStatus(movedPits);
+    
+    Player gameWinner = GameDecider.findWinner(movedPits);
 
     if (gameWinner != null) {
       game.setWinningRow(gameWinner);
-      game.setGameFinished(true);
     }
-    game.setStatus(movedPits);
-
+    
     return repo.save(game);
   }
 

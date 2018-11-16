@@ -5,11 +5,14 @@ public enum Player {
   TOP("TOP"),
   BOTTOM("BOTTOM");
   
-  String row;
+  private String row;
   
   Player(String row){
    this.row = row;
   }
-  
-  
+
+  public String getRowValue() {
+    return row;
+  }
+
 }

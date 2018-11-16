@@ -15,29 +15,33 @@ public class MovementEngine {
   private static final int SINGLE_STONE_PIT = 1;
   private static final int ARRAY_LIMIT = 14;
 
-  public int[] movePits(int[] status, int pitId) {
-    int index = pitId - 1;
-    int stonesInPit = status[index];
-    status[index] = 0;
-    int[] oldPits = status.clone();
-    int counter = index + 1; // starting position after picking up at pit
-    Player player = PlayerDecider.whichPlayerIsMoving(pitId - 1);
+  public int[] movePits(int[] pits, int pitId) {
+    int pitArrayId = pitId - 1;
+    int stonesToDrop = pits[pitArrayId];
+    pits[pitArrayId] = 0; //pick up stones
+    int[] originalPits = pits.clone();
+    int[] movedPits = pits.clone();
 
-    for (int stonesDropped = 1; stonesDropped <= stonesInPit;) {
-      if (counter == ARRAY_LIMIT) {
-        counter = 0;
+    int index = pitId; // new variable for readability - start of array pit id + 1 because it's first place to drop a stone  
+    Player player = PlayerDecider.whichPlayerIsMoving(pitArrayId);
+
+    originalPits[pitArrayId] = 0; //pick up stones
+    movedPits[pitArrayId] = 0; //pick up stones
+    for (int stonesDropped = 1; stonesDropped <= stonesToDrop;) {
+      if (index == ARRAY_LIMIT) {
+        index = 0; //cycle arrray
       }
-      if (isNotOpponentsHouse(player, counter)) {
-        status[counter] = oldPits[counter] + 1;
-        if (isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(counter, stonesDropped, player,
-            status, stonesInPit)) {
-          takeOpponentsStones(status, counter, player);
+      if (isNotOpponentsHouse(player, index)) {
+        movedPits[index] = originalPits[index] + 1;
+        if (isFinalStoneDroppedInEmptyPitNotInOwnHouseOrOpponentsPit(index, stonesDropped, player,
+            movedPits, stonesToDrop)) {
+          takeOpponentsStones(movedPits, index, player);
         }
         stonesDropped++;
       }
-      counter++;
+      index++;
     }
-    return status;
+    return movedPits;
   }
 
   private boolean isNotOpponentsHouse(Player player, int counter) {
@@ -68,19 +72,19 @@ public class MovementEngine {
     return false;
   }
 
-  private void takeOpponentsStones(int[] pits, int currentIndex, Player player) {
+  private void takeOpponentsStones(int[] pits, int index, Player player) {
     if (player == Player.BOTTOM) {
-      LOGGER.info("Taking opponents stones in pit: " + (currentIndex + OPPOSITE_PIT));
-      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + SINGLE_STONE_PIT; // always one due to +1 last move
-      pits[currentIndex] = 0;
-      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + pits[currentIndex + OPPOSITE_PIT];
-      pits[currentIndex + OPPOSITE_PIT] = 0;
+      int opponentsPit = index + OPPOSITE_PIT;
+      LOGGER.info("Taking opponents stones in pit: " + opponentsPit);
+      pits[index] = 0;  //remove final stone dropped
+      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + (pits[opponentsPit] + 1); //add final stone dropped 
+      pits[opponentsPit] = 0;
     } else {
-      LOGGER.info("Taking opponents stones in pit: " + (currentIndex - OPPOSITE_PIT));
-      pits[TOP_HOUSE] = pits[TOP_HOUSE] + SINGLE_STONE_PIT; // always one due to +1 last move
-      pits[currentIndex] = 0;
-      pits[TOP_HOUSE] = pits[TOP_HOUSE] + pits[currentIndex - OPPOSITE_PIT];
-      pits[currentIndex - OPPOSITE_PIT] = 0;
+      int opponentsPit = index - OPPOSITE_PIT;
+      LOGGER.info("Taking opponents stones in pit: " + opponentsPit);
+      pits[index] = 0; //remove final stone dropped
+      pits[TOP_HOUSE] = pits[TOP_HOUSE] + (pits[opponentsPit] + 1); //add final stone dropped
+      pits[opponentsPit] = 0;
     }
   }
 }

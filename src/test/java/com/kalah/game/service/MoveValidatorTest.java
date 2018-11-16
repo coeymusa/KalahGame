@@ -43,9 +43,37 @@ public class MoveValidatorTest {
   @Test
   public void shouldThrowErrorWhenTryingToMoveOnEmptyPit() throws Exception {
     // given
+    int pitId = 6;
+    testGame.setStatus(new int[] {6, 6, 6, 6, 6, 0, 0, 6, 6, 6, 6, 6, 6, 0});
+
+
+    expectedEx.expect(KalahGameException.class);
+    expectedEx.expectMessage("Requested move invalid for game: " + testGameId + ". Pit " + pitId
+        + " is empty or a house.");
+    // when
+    underTest.validateMove(testGame, pitId);
+    // then
+  }
+  
+  @Test
+  public void shouldThrowErrorWhenTryingToMoveOnBottomHouse() throws Exception {
+    // given
     int pitId = 7;
     testGame.setStatus(new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0});
 
+    expectedEx.expect(KalahGameException.class);
+    expectedEx.expectMessage("Requested move invalid for game: " + testGameId + ". Pit " + pitId
+        + " is empty or a house.");
+    // when
+    underTest.validateMove(testGame, pitId);
+    // then
+  }
+  
+  @Test
+  public void shouldThrowErrorWhenTryingToMoveOnTopHouse() throws Exception {
+    // given
+    int pitId = 14;
+    testGame.setStatus(new int[] {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 0});
 
     expectedEx.expect(KalahGameException.class);
     expectedEx.expectMessage("Requested move invalid for game: " + testGameId + ". Pit " + pitId
