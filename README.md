@@ -128,7 +128,7 @@ Move is requested on a pit which is a "House" e.g 7 or 14 a 500 response should 
 "path": "/games/09a9ed4a-0ef0-4915-9e9c-9891f0336e9b/pits/7"
  ```
  
- Move is requested for a pit with no stones
+ Move is requested for a pit with no stones a 500 response should be returned
   ```
 "status": 500,
 "error": "Internal Server Error",
