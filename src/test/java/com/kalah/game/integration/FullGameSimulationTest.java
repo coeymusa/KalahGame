@@ -23,11 +23,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {KalahGameApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class FullGameSimulation {
+public class FullGameSimulationTest {
   private static final String NEW_GAME_ENDPOINT = "/games";
   private static final String UUID_REGEX =
       "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; // https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
   private OkHttpClient client = new OkHttpClient();
+  private static final int ACCEPTED_HTTP_STATUS = 201;
   public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 
@@ -95,7 +96,7 @@ public class FullGameSimulation {
   private void submitMoveError(int pitId) throws IOException {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder().url(createURLWithPortForMove(gameId, pitId))
-        .post(requestBody).build();
+        .put(requestBody).build();
     Response httpResponse = client.newCall(request).execute();
     String body = httpResponse.body().string();
 
@@ -121,7 +122,7 @@ public class FullGameSimulation {
   private void submitMove(int pitId) throws IOException {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder().url(createURLWithPortForMove(gameId, pitId))
-        .post(requestBody).build();
+        .put(requestBody).build();
     Response httpResponse = client.newCall(request).execute();
     String body = httpResponse.body().string();
     Assert.assertEquals(200, httpResponse.code());
@@ -134,7 +135,7 @@ public class FullGameSimulation {
         "Cannot make a move on an ended game: " + gameId + ". Winner: TOP";
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder().url(createURLWithPortForMove(gameId, pitId))
-        .post(requestBody).build();
+        .put(requestBody).build();
     // when
     Response httpResponse = client.newCall(request).execute();
     // then
@@ -158,7 +159,7 @@ public class FullGameSimulation {
     // then
     int responseCode = httpResponse.code();
     String body = httpResponse.body().string();
-    Assert.assertEquals(200, responseCode);
+    Assert.assertEquals(ACCEPTED_HTTP_STATUS, responseCode);
     final JSONObject responseObj = new JSONObject(body);
     gameId = responseObj.getString("id");
     return gameId;
