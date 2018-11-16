@@ -4,7 +4,6 @@ import com.kalah.game.model.Player;
 import java.util.Arrays;
 import org.springframework.stereotype.Service;
 
-@Service
 public class GameDecider {
 
   private static final int TOP_HOUSE = 13;

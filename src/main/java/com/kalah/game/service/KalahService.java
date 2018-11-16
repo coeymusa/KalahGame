@@ -24,9 +24,6 @@ public class KalahService {
   @Autowired
   private MovementEngine movementEngine;
 
-  @Autowired
-  private MoveValidator validator;
-
   public Game createNewGame() {
     Game game = new Game();
     game.setUri(buildUrlForNewGame(game.getId()));
@@ -43,7 +40,7 @@ public class KalahService {
         .filter(currentGame -> currentGame.getId().toString().contains(gameId)).findFirst()
         .orElseThrow(() -> new KalahGameException("Cannot find game with an id: " + gameId));
 
-    validator.validateMove(game, pitId);
+    MoveValidator.validateMove(game, pitId);
 
     int[] movedPits = movementEngine.movePits(game.getStatus(), pitId);
 

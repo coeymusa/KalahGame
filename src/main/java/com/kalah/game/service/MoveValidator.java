@@ -3,12 +3,11 @@ package com.kalah.game.service;
 import com.kalah.game.model.Game;
 import org.springframework.stereotype.Service;
 
-@Service
 public class MoveValidator {
 
   private static final int[] INVALID_PITS = new int[] {6, 13};
 
-  public void validateMove(Game game, int pitId) throws KalahGameException {
+  public static void validateMove(Game game, int pitId) throws KalahGameException {
     String gameId = game.getId().toString();
 
     if (game.getGameFinished()) {
@@ -22,7 +21,7 @@ public class MoveValidator {
     }
   }
 
-  private boolean requestedMoveInvalid(int[] pits, int pitId) {
+  private static boolean requestedMoveInvalid(int[] pits, int pitId) {
     if (pits[pitId - 1] == 0 || pitId - 1 == INVALID_PITS[0] || pitId - 1 == INVALID_PITS[1]) {
       return true;
     }
