@@ -38,7 +38,7 @@ public class KalahIntegrationTest {
   }
 
   @Test
-  public void givenANewGameHasBeenRequestedThen200ReturnedWithAValidGame() throws IOException, JSONException{
+  public void givenANewGameHasBeenRequestedThen201ReturnedWithAValidGame() throws IOException, JSONException{
     //given 
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
