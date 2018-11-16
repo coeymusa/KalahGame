@@ -25,8 +25,6 @@ public class MovementEngine {
     int index = pitId; // new variable for readability - start of array pit id + 1 because it's first place to drop a stone  
     Player player = PlayerDecider.whichPlayerIsMoving(pitArrayId);
 
-    originalPits[pitArrayId] = 0; //pick up stones
-    movedPits[pitArrayId] = 0; //pick up stones
     for (int stonesDropped = 1; stonesDropped <= stonesToDrop;) {
       if (index == ARRAY_LIMIT) {
         index = 0; //cycle arrray
