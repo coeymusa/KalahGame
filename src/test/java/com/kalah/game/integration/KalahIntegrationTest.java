@@ -1,8 +1,6 @@
 package com.kalah.game.integration;
 
 import java.io.IOException;
-import java.util.List;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -10,14 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.kalah.game.KalahGameApplication;
-import com.kalah.game.model.Game;
-import com.kalah.game.repository.KalahRepository;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,15 +23,14 @@ import okhttp3.Response;
 @SpringBootTest(classes = {KalahGameApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class KalahIntegrationTest {
   private static final String NEW_GAME_ENDPOINT = "/games";
+  private static final int ACCEPTED_HTTP_STATUS = 201;
+  private static final int OK_HTTP_STATUS = 200;
   private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"; //https://stackoverflow.com/questions/136505/searching-for-uuids-in-text-with-regex
   private OkHttpClient client = new OkHttpClient();
   public static final MediaType JSON  = MediaType.parse("application/json; charset=utf-8");
 
   @LocalServerPort
   private int port;
-
-  @Autowired
-  private KalahRepository repo;
 
   @Before()
   public void setup(){
@@ -71,7 +65,7 @@ public class KalahIntegrationTest {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPortForMove(requestGameId,requestPitId))
-        .post(requestBody)
+        .put(requestBody)
         .build();
     //when
     Response httpResponse = client.newCall(request).execute(); 
@@ -91,7 +85,7 @@ public class KalahIntegrationTest {
     RequestBody body = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPortForMove(gameId,pitId))
-        .post(body)
+        .put(body)
         .build();
     //when
     Response httpResponse = client.newCall(request).execute(); 
@@ -109,7 +103,7 @@ public class KalahIntegrationTest {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
     Request request = new Request.Builder()
         .url(createURLWithPortForMove(requestGameId,pitId))
-        .post(requestBody)
+        .put(requestBody)
         .build();
     //when
     Response httpResponse = client.newCall(request).execute(); 
@@ -122,14 +116,6 @@ public class KalahIntegrationTest {
     Assert.assertEquals(errorMessage, expectedErrorMessage);
   }
 
-  private void checkHttpResponseForNewGame(String body, int responseCode) throws JSONException {
-    final JSONObject responseObj = new JSONObject(body);
-    String uri = responseObj.getString("uri");
-    String id = responseObj.getString("id");
-    Assert.assertTrue(validUUIDCheck(id));
-    Assert.assertTrue(validURLCheck(uri,id));
-    Assert.assertEquals(200, responseCode);
-  }
 
   private String createNewGame() throws IOException, JSONException {
     RequestBody requestBody = RequestBody.create(JSON, "{}");
@@ -153,7 +139,7 @@ public class KalahIntegrationTest {
       String status = responseObj.getString("status");
       String id = responseObj.getString("id");
 
-      Assert.assertEquals(200, responseCode);
+      Assert.assertEquals(OK_HTTP_STATUS, responseCode);
       Assert.assertTrue(validUUIDCheck(id));
       Assert.assertTrue(validURLCheck(uri,id));
       Assert.assertNotNull(status);
@@ -162,6 +148,14 @@ public class KalahIntegrationTest {
     }
   }
 
+  private void checkHttpResponseForNewGame(String body, int responseCode) throws JSONException {
+    final JSONObject responseObj = new JSONObject(body);
+    String uri = responseObj.getString("uri");
+    String id = responseObj.getString("id");
+    Assert.assertTrue(validUUIDCheck(id));
+    Assert.assertTrue(validURLCheck(uri,id));
+    Assert.assertEquals(ACCEPTED_HTTP_STATUS, responseCode);
+  }
   private boolean validURLCheck(String url, String gameId) {
     if(url.equals("http://localhost:0/games/" + gameId)) {
       return true;
