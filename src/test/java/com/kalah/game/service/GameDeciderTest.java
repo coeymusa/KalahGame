@@ -45,5 +45,15 @@ public class GameDeciderTest {
     // then
     Assert.assertEquals(Player.BOTTOM, winner);
   }
+  
+  @Test
+  public void handleNoPlayerWinning(){
+    // given
+    int[] givenPits = new int[] {0, 0,2, 2, 0, 0, 1001, 13, 14, 15, 16, 17, 17, 31};
+    // when
+    Player winner = GameDecider.findWinner(givenPits);
+    // then
+    Assert.assertEquals(null, winner);
+  }
 
 }

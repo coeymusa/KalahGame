@@ -1,42 +1,66 @@
 package com.kalah.game.service;
 
-import com.kalah.game.model.Player;
 import java.util.Arrays;
-import org.springframework.stereotype.Service;
+import com.kalah.game.model.Player;
 
 public class GameDecider {
 
   private static final int TOP_HOUSE = 13;
   private static final int BOTTOM_HOUSE = 6;
+  private static final String TOP = "TOP";
+  private static final String BOTTOM = "BOTTOM";
+  private static int[] topRow,bottomRow;
+  private static final int[] EMPTY_ROW = new int[] {0, 0, 0, 0, 0, 0};
 
   public static Player findWinner(int[] pits) {
-    int[] copyOfPits = pits.clone();
-    int[] topRow = Arrays.copyOfRange(pits, 7, 13);
-    int[] bottomRow = Arrays.copyOfRange(pits, 0, 6);
-    int[] winningRow = new int[] {0, 0, 0, 0, 0, 0};
+    int[] pitsClone = pits.clone();
+    int [] summedPits = null;
+    topRow = Arrays.copyOfRange(pits, 7, 13);
+    bottomRow = Arrays.copyOfRange(pits, 0, 6);
+    
+    String emptyRow = whichRowIsEmpty(pitsClone);
+    
+    if(emptyRow == null){
+      return null;
+    }
+    
+    switch(emptyRow){
+      case TOP:
+        summedPits = sumPits(pitsClone, BOTTOM_HOUSE); //sum remaining pits in bottom row
+        return winningPlayer(summedPits);
+      case BOTTOM:
+        summedPits = sumPits(pitsClone, TOP_HOUSE); //sum remaining pits in top row
+        return winningPlayer(summedPits);
+    }
+ 
+    return null;
+  }
 
-    if (Arrays.equals(winningRow, topRow)) {
-      for (int remaningPit : bottomRow) {
-        copyOfPits[BOTTOM_HOUSE] = copyOfPits[TOP_HOUSE] + remaningPit;
-      }
-      if (copyOfPits[BOTTOM_HOUSE] > pits[TOP_HOUSE]) {
-        return Player.BOTTOM;
-      }
-      if (copyOfPits[BOTTOM_HOUSE] < pits[TOP_HOUSE]) {
-        return Player.TOP;
-      }
+  private static int[] sumPits(int[] pitsClone, int oppositeHouse) {
+    for (int remaningPit : topRow) {
+      pitsClone[oppositeHouse] = pitsClone[oppositeHouse] + remaningPit; //sum opposite pits
+    }
+    return pitsClone;
+  }
+
+  private static Player winningPlayer(int[] pits) {
+    if (pits[BOTTOM_HOUSE] > pits[TOP_HOUSE]) {
+      return Player.BOTTOM;
+    }
+    
+    if (pits[BOTTOM_HOUSE] < pits[TOP_HOUSE]) {
+      return Player.TOP;
+    }
+    return null;
+  }
+
+  private static String whichRowIsEmpty(int[] pits) {
+    if (Arrays.equals(EMPTY_ROW, topRow)) {
+      return TOP;
     }
 
-    if (Arrays.equals(winningRow, bottomRow)) {
-      for (int remaningPit : topRow) {
-        copyOfPits[TOP_HOUSE] = copyOfPits[TOP_HOUSE] + remaningPit;
-      }
-      if (copyOfPits[BOTTOM_HOUSE] > pits[TOP_HOUSE]) {
-        return Player.BOTTOM;
-      }
-      if (copyOfPits[BOTTOM_HOUSE] < pits[TOP_HOUSE]) {
-        return Player.TOP;
-      }
+    if (Arrays.equals(EMPTY_ROW, bottomRow)) {
+      return BOTTOM;
     }
     return null;
   }
