@@ -36,7 +36,7 @@ public class MovementEngine {
 
       if (isNotOpponentsHouse(player, pitId)) {
         movedPits[pitId] = originalPits[pitId] + 1;
-        if (stonesDropped == stonesToDrop && droppedInEmptyPitNotInOwnHouseOrOpponentsPit(pitId, player, movedPits)) {
+        if (stonesDropped == stonesToDrop && droppedInPlayersEmptyPit(pitId, player, movedPits)) {
           return captureOpponentsStones(movedPits, pitId, player);
         }
         stonesDropped++;
@@ -57,9 +57,10 @@ public class MovementEngine {
     return false;
   }
 
-  private boolean droppedInEmptyPitNotInOwnHouseOrOpponentsPit(int currentIndex, Player player, int[] pits) {
+  private boolean droppedInPlayersEmptyPit(int currentIndex, Player player, int[] pits) {
+    //Not players kalah and is a pit where last stone dropped
     if (player == Player.BOTTOM && currentIndex < BOTTOM_HOUSE
-        && pits[currentIndex] == SINGLE_STONE_PIT) {
+        && pits[currentIndex] == SINGLE_STONE_PIT) { 
       return true;
     }
 
@@ -72,14 +73,14 @@ public class MovementEngine {
   }
 
   private int[] captureOpponentsStones(int[] pits, int index, Player player) {
-     
+
     if (player == Player.BOTTOM) {
       int opponentsPit = index + OPPOSITE_PIT;
       LOGGER.info("Taking opponents stones in pit: " + opponentsPit);
       pits[index] = 0;  //remove final stone dropped
       pits[BOTTOM_HOUSE] += pits[opponentsPit] + 1; //add final stone dropped 
       pits[opponentsPit] = 0;
-      
+
       return pits;
     } else {
       int opponentsPit = index - OPPOSITE_PIT;
@@ -87,7 +88,7 @@ public class MovementEngine {
       pits[index] = 0; //remove final stone dropped
       pits[TOP_HOUSE] += pits[opponentsPit] + 1; //add final stone dropped
       pits[opponentsPit] = 0;
-      
+
       return pits;
     }
   }
