@@ -20,11 +20,17 @@ public class MovementEngine {
     int stonesToDrop = pits[pitArrayId];
     pits[pitArrayId] = 0; //pick up stones
     int[] originalPits = pits.clone();
-    int[] movedPits = pits.clone();
-
-    int index = pitId; // new variable for readability - start of array pit id + 1 because it's first place to drop a stone  
+    int index = pitId; //start of array pit id + 1 -- it's first place to drop a stone  
+    
     Player player = PlayerDecider.whichPlayerIsMoving(pitArrayId);
+    int[] movedPits = makeMovements(originalPits,player, stonesToDrop,index);
+    
+    return movedPits;
+  }
 
+  private int[] makeMovements(int[] originalPits, Player player, int stonesToDrop, int index) {
+    int[] movedPits = originalPits.clone();
+    
     for (int stonesDropped = 1; stonesDropped <= stonesToDrop;) {
       if (index == ARRAY_LIMIT) {
         index = 0; //cycle arrray
@@ -39,6 +45,7 @@ public class MovementEngine {
       }
       index++;
     }
+    
     return movedPits;
   }
 
