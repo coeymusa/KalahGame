@@ -75,13 +75,13 @@ public class MovementEngine {
       int opponentsPit = index + OPPOSITE_PIT;
       LOGGER.info("Taking opponents stones in pit: " + opponentsPit);
       pits[index] = 0;  //remove final stone dropped
-      pits[BOTTOM_HOUSE] = pits[BOTTOM_HOUSE] + (pits[opponentsPit] + 1); //add final stone dropped 
+      pits[BOTTOM_HOUSE] += pits[opponentsPit] + 1; //add final stone dropped 
       pits[opponentsPit] = 0;
     } else {
       int opponentsPit = index - OPPOSITE_PIT;
       LOGGER.info("Taking opponents stones in pit: " + opponentsPit);
       pits[index] = 0; //remove final stone dropped
-      pits[TOP_HOUSE] = pits[TOP_HOUSE] + (pits[opponentsPit] + 1); //add final stone dropped
+      pits[TOP_HOUSE] += pits[opponentsPit] + 1; //add final stone dropped
       pits[opponentsPit] = 0;
     }
   }
